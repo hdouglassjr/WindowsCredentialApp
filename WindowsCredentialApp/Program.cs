@@ -17,12 +17,15 @@ namespace WindowsCredentialApp
 
             foreach(var credential in credentials)
             {
-                stringBuilder.Append("Persistence Type:  " + credential.PersistanceType);
-                stringBuilder.Append("  UserName: " + (credential.Username  ?? "null"));
-                stringBuilder.AppendLine("  Target:  " + credential.Target);
-                //stringBuilder.AppendLine(" ");
+                if(credential.Target.Contains("outlook"))
+                {
+                    stringBuilder.Append("Persistence Type:  " + credential.PersistanceType);
+                    stringBuilder.Append("  UserName: " + (credential.Username  ?? "null"));
+                    stringBuilder.AppendLine("  Target:  " + credential.Target);
+                    //stringBuilder.AppendLine(" ");
 
-                Console.WriteLine(stringBuilder.ToString());
+                    Console.WriteLine(stringBuilder.ToString());
+                }
             }
 
             Console.ReadLine();

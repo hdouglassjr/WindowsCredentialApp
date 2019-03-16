@@ -43,5 +43,12 @@ namespace WindowsCredentialTests
             }
             Assert.IsTrue(HasMatch);
         }
+
+        [TestMethod]
+        public void Test_Get_Demo_Targets()
+        {
+            var results = _credentialObj.GetCredentialsSearch("Demo");
+            Assert.IsNotNull(results);
+        }
     }
 }
