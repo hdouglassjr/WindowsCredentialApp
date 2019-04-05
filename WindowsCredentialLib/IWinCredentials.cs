@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using CredentialManagement;
+﻿using CredentialManagement;
+using System.Collections.Generic;
 
 namespace WindowsCredentialLib
 {
@@ -8,7 +8,9 @@ namespace WindowsCredentialLib
         CredentialSet CurrentCredentials { get; set; }
 
         bool DeleteCredential(Credential credential);
-        List<Credential> GetCredentialsSearch(string targetText);
+
+        IList<Credential> GetCredentialsSearch(string targetText);
+
         bool UpdatePasswords(List<Credential> credentials);
     }
 }

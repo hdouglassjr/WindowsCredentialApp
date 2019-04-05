@@ -12,18 +12,21 @@ namespace WindowsCredentialLib
             WindowsCredentialCollection(GetTargets().ToList());
         }
 
-        public List<Credential> GetCredentialsSearch(string targetText)
+        public IList<Credential> GetCredentialsSearch(string targetText)
         {
             return CurrentCredentials.FindAll(c => c.Target.Contains(targetText)).ToList();
         }
+
         public bool UpdatePasswords(List<Credential> credentials)
         {
             return false;
         }
+
         public bool DeleteCredential(Credential credential)
         {
             return false;
         }
+
         private IEnumerable<string> GetTargets()
         {
             const string cSplitString = "target="; // word "target" might differ in other languages
