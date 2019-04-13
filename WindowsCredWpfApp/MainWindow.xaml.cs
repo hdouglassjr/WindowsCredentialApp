@@ -1,34 +1,26 @@
 ﻿using CredentialManagement;
 using MahApps.Metro.Controls;
-using MaterialDesignThemes.Wpf;
+using MahApps.Metro.Controls.Dialogs;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Media;
-using WindowsCredWpfApp.Model;
 
 namespace WindowsCredWpfApp
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : MetroWindow
+    public partial class MainWindow
     {
-        protected ListCollectionView collectionView;
+        private readonly ListCollectionView _credentialCollectionView;
         public MainWindow()
         {
             InitializeComponent();
-            collectionView = (ListCollectionView) CollectionViewSource.GetDefaultView(LstItems.ItemsSource);
-            collectionView.IsLiveFiltering = true;
-            collectionView.LiveFilteringProperties.Add("Target");
-            collectionView.Filter = CredentialListFilter;
-            //var palette = new PaletteHelper().QueryPalette();
-            //var hue = palette.AccentSwatch.AccentHues.ToArray()[palette.AccentHueIndex];
-            //CredToolBar.Background = new SolidColorBrush(hue.Color);
-            //LstItems.Background = new SolidColorBrush(hue.Color);
+            _credentialCollectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(LstItems.ItemsSource);
+            _credentialCollectionView.IsLiveFiltering = true;
+            _credentialCollectionView.LiveFilteringProperties.Add("Target");
+            _credentialCollectionView.Filter = CredentialListFilter;
         }
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
@@ -43,36 +35,76 @@ namespace WindowsCredWpfApp
 
         private bool CredentialListFilter(object item)
         {
-            if (string.IsNullOrEmpty(TxtFilter.Text))
-            {
+            if (string.IsNullOrEmpty(FilterText.Text))
                 return true;
-            }
-            else
-            {
-                return ((item as Credential).Target.IndexOf(TxtFilter.Text, StringComparison.OrdinalIgnoreCase) >= 0);
-            }
+            return ((Credential)item).Target.IndexOf(FilterText.Text, StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         private void TxtSearchBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
-            //RefreshList();
-            collectionView.Refresh();
+            _credentialCollectionView.Refresh();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Update_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: create trigger and message if 0 selected items
+            StringBuilder builder = new StringBuilder();
+
+            if (LstItems.SelectedItems.Count == 0)
+            {
+                this.ShowMessageAsync("Update Error", "You must make at least one selection to update.");
+                return;
+            }
+
+            if (TxtNewPassword.Password.Length < 8)
+            {
+                this.ShowMessageAsync("Update Password Error", "Password length must be at least 8 characters.");
+                return;
+            }
+
             foreach (var credentialModelItem in LstItems.SelectedItems)
             {
                 ((Credential)credentialModelItem).Load();
-                ((Credential)credentialModelItem).Password = TxtNewPassword.Text;
-                var result = ((Credential)credentialModelItem).Save();
+                ((Credential)credentialModelItem).SecurePassword = TxtNewPassword.SecurePassword;
+                ((Credential)credentialModelItem).Save();
+                builder.Append(((Credential)credentialModelItem).Target);
             }
+
+            this.ShowMessageAsync("Success!",
+                $"The following selected credential password(s) updated:  {builder}");
+            LstItems.SelectedItems.Clear();
+            TxtNewPassword.Password = string.Empty;
+            FilterText.Text = string.Empty;
+            CheckAllBox.IsChecked = false;
             RefreshList();
+
         }
         private void RefreshList()
         {
             CollectionViewSource.GetDefaultView(LstItems.ItemsSource).Refresh();
+        }
+
+        private void DeleteButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            StringBuilder builder = new StringBuilder();
+
+            if (LstItems.SelectedItems.Count == 0)
+            {
+                this.ShowMessageAsync("Delete Error", "You must make at least one selection to delete.");
+                return;
+            }
+
+            foreach (var credentialModelItem in LstItems.SelectedItems)
+            {
+                ((Credential)credentialModelItem).Load();
+                builder.Append(((Credential)credentialModelItem).Target);
+                ((Credential)credentialModelItem).Delete();
+                
+            }
+            LstItems.SelectedItems.Clear();
+            this.ShowMessageAsync("Success!",
+                $"The following selected credential password(s) deleted:  {builder}");
+            FilterText.Text = string.Empty;
+            RefreshList();
         }
     }
 }

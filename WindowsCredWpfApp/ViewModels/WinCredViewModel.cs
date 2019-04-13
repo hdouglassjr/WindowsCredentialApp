@@ -12,33 +12,14 @@ namespace WindowsCredWpfApp.ViewModels
     {
         private readonly WinCredImpl _credentials = new WinCredImpl();
         private ObservableCollection<Credential> _windowsCredentials;
-        private List<CredentialModel> _credentialModels;
 
         public WinCredViewModel()
         {
             List<Credential> credentials = _credentials.CurrentCredentials.ToList();
             _windowsCredentials = new ObservableCollection<Credential>(credentials);
         }
-
-        private List<CredentialModel> MapCredentialModels()
-        {
-            List<Credential> credentials = _credentials.CurrentCredentials.ToList();
-            _credentialModels = new List<CredentialModel>();
-
-            foreach (var credential in credentials)
-            {
-                var credModel = new CredentialModel
-                {
-                    Target = credential.Target,
-                    Username = credential.Username,
-                    Password = credential.Password,
-                    LastWriteTime = credential.LastWriteTime
-                };
-                _credentialModels.Add(credModel);
-            }
-
-            return _credentialModels;
-        }
+        //TODO:Add delete call and wire into UI with a delete button/click event.
+      
         public ObservableCollection<Credential> Credentials
         {
             get => _windowsCredentials;

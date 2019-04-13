@@ -50,3 +50,24 @@
             //        Console.WriteLine(target);
             //    }
             //}
+
+
+			  private List<CredentialModel> MapCredentialModels()
+        {
+            List<Credential> credentials = _credentials.CurrentCredentials.ToList();
+            _credentialModels = new List<CredentialModel>();
+
+            foreach (var credential in credentials)
+            {
+                var credModel = new CredentialModel
+                {
+                    Target = credential.Target,
+                    Username = credential.Username,
+                    Password = credential.Password,
+                    LastWriteTime = credential.LastWriteTime
+                };
+                _credentialModels.Add(credModel);
+            }
+
+            return _credentialModels;
+        }
