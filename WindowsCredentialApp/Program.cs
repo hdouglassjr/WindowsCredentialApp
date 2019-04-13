@@ -13,7 +13,7 @@ namespace WindowsCredentialApp
         {
             WinCredImpl credImpl = new WinCredImpl();
             var stringBuilder = new StringBuilder();
-            List<Credential> credentials = credImpl.CurrentCredentials;
+            IList<Credential> credentials = credImpl.CurrentCredentials;
 
             foreach(var credential in credentials)
             {
